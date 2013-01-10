@@ -1,5 +1,8 @@
 #!/usr/bin/perl
 
+# Basic Bliss Hive parser.
+# 1/10/2013 - osb
+
 use strict;
 use warnings;
 use DBI;
