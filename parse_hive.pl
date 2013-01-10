@@ -47,10 +47,16 @@ print "Attempting to connect to $dbhost:$dbport..\n";
 my $dsn = "DBI:mysql:database=$dbname;host=$dbhost;port=$dbport";
 my $dbh = DBI->connect($dsn, $dbuser, $dbpass);
 
-my $p_table = $dbh->prepare("SELECT name, unique_id, humanity, survival_attempts, total_survivor_kills, total_zombie_kills, total_headshots FROM profile ORDER BY  `profile`.`total_zombie_kills`");
-$p_table->execute();
+sub exec_query {
+    my ($details) = $_[0];
+    my $query = $dbh->prepare($details);
+    $query->execute();
+    return $query;
+}
 
-while( my $row = $p_table->fetchrow_hashref() ) {
+my $ptable = exec_query("SELECT name, unique_id, humanity, survival_attempts, total_survivor_kills, total_zombie_kills, total_headshots FROM profile ORDER BY  `profile`.`total_zombie_kills`");
+
+while( my $row = $ptable->fetchrow_hashref() ) {
     my $name;
     for my $pdata(sort keys %$row) { 
         if($pdata =~ /^name/ ) {
@@ -94,11 +100,4 @@ for my $player ( sort keys %player_data ) {
         print " $stats=$pref->{$stats}\n";
     }
     print "\n"
-}
-
-sub exec_query {
-    my ($details) = $_[0];
-    my $query = $dbh->prepare($details);
-    $query->execute();
-    return $query;
 }
