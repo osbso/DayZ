@@ -1,5 +1,9 @@
 #!/usr/bin/perl
 
+# DayZ Bliss Hive parser 
+# osb - sonny@mccauliff.com
+# 1/10/2013
+
 use strict;
 use warnings;
 use DBI;
