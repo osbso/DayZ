@@ -1,8 +1,5 @@
 #!/usr/bin/perl
 
-# Basic Bliss Hive parser.
-# 1/10/2013 - osb
-
 use strict;
 use warnings;
 use DBI;
@@ -69,13 +66,26 @@ for my $player ( sort keys %player_data ) {
     my $pref = $player_data{$player};
     for my $stats ( sort keys %$pref ) {
         if($stats =~ /UID/ ) { 
-            my $s_table = exec_query("SELECT inventory, backpack FROM `survivor` WHERE unique_id='$pref->{$stats}' AND is_dead='0'");
-            while( my $s_inventory = $s_table->fetchrow_arrayref() ) {
+            my $itable = exec_query("SELECT inventory FROM `survivor` WHERE unique_id='$pref->{$stats}' AND is_dead=0");
+            while( my $inventory = $itable->fetchrow_arrayref() ) {
                 print " INVENTORY: ";
-                for( @$s_inventory ) {
-                    print " $_";
+                for( @$inventory ) {
+                    $_ =~ s/\[|\]|\"|\s+|Item//g;
+                    my $item = join(" ", split(/,/, $_) );
+                    print "$item\n";
                 }
             }
+            my $btable = exec_query("SELECT backpack FROM `survivor` WHERE unique_id='$pref->{$stats}' AND is_dead=0");
+            while( my $bpack = $btable->fetchrow_arrayref() ) {
+                print " BACKPACK: ";
+                for( @$bpack ) {
+                    $_ =~ s/\[|\]|\"|\s+|Item//g;
+                    my $item = join(" ", split(/,/, $_) );
+                    print "$item\n";
+                }
+
+            }
+            next;
         }
         print " $stats=$pref->{$stats}\n";
     }
